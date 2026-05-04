@@ -196,12 +196,12 @@ $foodItems = getAll($conn, "SELECT * FROM food_items ORDER by category, item_nam
                                  <tr data-item-id="<?= e($foodItem['id']); ?>"
                                      data-category="<?= e($foodItem['category']); ?>"
                                      data-item-name="<?= e($foodItem['item_name']); ?>"
-                                     data-isavailable="<?= $foodItem['is_available'] ? '1' : '0'; ?>">
+                                     data-is-available="<?= $foodItem['is_available'] ? '1' : '0'; ?>">
+                                    <td><?= e($foodItem['item_code']); ?></td>
+                                    <td><?= e($foodItem['item_name']); ?></td>
                                     <td>
                                         <img src="<?= e($foodItem['image_url'] ?? '') ?>" width="100" alt="Item image" class="imgUrl">
                                     </td>
-                                    <td><?= e($foodItem['item_code']); ?></td>
-                                    <td><?= e($foodItem['item_name']); ?></td>
                                     <td>&#8369;<?= number_format($foodItem['price'], 2); ?></td>
                                     <td><?= e($foodItem['category']); ?></td>
                                     <td>
@@ -222,7 +222,7 @@ $foodItems = getAll($conn, "SELECT * FROM food_items ORDER by category, item_nam
                             <?php endforeach; ?>
                         <?php else: ?>
                                 <tr class="empty-state-row">
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <div class="empty-state">
                                             <i class="fas fa-utensils"></i>
                                             <p>No menu items found</p>

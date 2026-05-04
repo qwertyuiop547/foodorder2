@@ -116,6 +116,7 @@ if(!in_array($ext, $allowedExt, true)){
         'success' => false,
         'message' => 'Invalid Image Type'
     ]);
+    exit;
 }
 
 $fileName = 'item_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
@@ -126,6 +127,7 @@ if(!move_uploaded_file($item_image['tmp_name'], $targetPath)){
         'success' => false,
         'message' => 'Failed to save uploaded image'
     ]);
+    exit;
 }
 
 $projectFolder = basename(str_replace('\\', '/', dirname(__DIR__)));
@@ -169,7 +171,6 @@ if($insert_stmt->execute()){
     ]);
 }
 ?>
-
 
 
 

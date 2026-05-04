@@ -66,6 +66,10 @@ function showModal(message, type = 'success'){
     })
 }
 
+function toJsLiteral(value) {
+    return JSON.stringify(value == null ? '' : String(value));
+}
+
 function getItemsTableBody() {
     return document.getElementById('foodItemsTableBody') || document.querySelector('.items-table tbody');
 }
@@ -93,7 +97,7 @@ function updateItemCounters(isAvailable, delta) {
 function createEmptyItemsRow() {
     const row = document.createElement('tr');
     row.className = 'empty-state-row';
-    row.innerHTML = '<td colspan="6"><div class="empty-state"><i class="fas fa-utensils"></i><p>No menu items found</p></div></td>';
+    row.innerHTML = '<td colspan="7"><div class="empty-state"><i class="fas fa-utensils"></i><p>No menu items found</p></div></td>';
     return row;
 }
 
@@ -148,6 +152,11 @@ function appendItemRow(item) {
     removeEmptyItemsRow(tbody);
 
     const isAvailable = Number(item.is_available) === 1;
+    const imageUrl = item.image_url && item.image_url.trim()
+        ? item.image_url
+        : '../../assets/images/food.jpg';
+    const itemId = Number(item.id) || 0;
+    const priceValue = Number(item.price) || 0;
     const row = document.createElement('tr');
     row.dataset.itemId = item.id;
     row.dataset.category = item.category || '';
@@ -156,11 +165,11 @@ function appendItemRow(item) {
     row.innerHTML = [
         '<td>' + AJAX.formatText(item.item_code) + '</td>',
         '<td>' + AJAX.formatText(item.item_name) + '</td>',
-        '<td><img src="' + AJAX.formatText(item.image_url) + '" width=100 alt="Item Image"</td>',
-        '<td>&#8369;' + Number(item.price).toFixed(2) + '</td>',
+        '<td><img src="' + AJAX.formatText(imageUrl) + '" width="100" alt="Item image" class="imgUrl"></td>',
+        '<td>&#8369;' + priceValue.toFixed(2) + '</td>',
         '<td>' + AJAX.formatText(item.category) + '</td>',
         '<td><span class="status-badge ' + (isAvailable ? 'available' : 'unavailable') + '">' + (isAvailable ? 'Available' : 'Unavailable') + '</span></td>',
-        '<td><div class="item-actions"><button class="action-btn btn-edit" type="button" onclick="editModal(\'' + item.id + '\', \'' + AJAX.formatText(item.item_name) + '\', \'' + AJAX.formatText(item.category) + '\', ' + item.price + ', ' + (isAvailable ? '1' : '0') + ')">Edit</button><button type="button" class="action-btn btn-delete delete-item-btn" data-id="' + String(item.id) + '">Delete</button></div></td>'
+        '<td><div class="item-actions"><button class="action-btn btn-edit" type="button" onclick=\'editModal(' + itemId + ', ' + toJsLiteral(imageUrl) + ', ' + toJsLiteral(item.item_name) + ', ' + toJsLiteral(item.category) + ', ' + priceValue + ', ' + (isAvailable ? '1' : '0') + ')\'>Edit</button><button type="button" class="action-btn btn-delete delete-item-btn" data-id="' + String(itemId) + '">Delete</button></div></td>'
     ].join('');
 
     tbody.appendChild(row);
@@ -291,5 +300,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
 
