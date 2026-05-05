@@ -1,0 +1,31 @@
+@media (max-width: 480px) {
+    body {
+        font-size: 12px;
+    }
+
+  .container1 { display: none !important; }
+  .dashboard,
+  .addItem {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .addBtn button {
+    width: 100%;
+  }
+
+  .header-text h1 {
+    font-size: 14px;
+  }
+
+  .nav-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+
+}
+
+
+

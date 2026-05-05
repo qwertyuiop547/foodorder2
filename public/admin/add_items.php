@@ -66,7 +66,7 @@ $foodItems = getAll($conn, "SELECT * FROM food_items ORDER by category, item_nam
                     <span class="close" onclick="closeModal()">&times;</span>
 
                     <h2>Add Item</h2>
-
+            
                      <form action="../../ajax/add_items.php" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
                              <label for="item_image">Item Image</label>
