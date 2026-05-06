@@ -812,6 +812,12 @@ td {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modal-content{
@@ -908,6 +914,26 @@ td {
     height: 50px;
     border-radius: 50%;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
