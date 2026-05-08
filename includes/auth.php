@@ -3,7 +3,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require '../config/app.php';
+require __DIR__ . '/../config/app.php';
+
+// $path = '../config/app.php';
+
+// echo "Path : $path";
+
+// require "$path";
 
 function register($name, $email, $password){
     global $conn;

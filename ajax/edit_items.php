@@ -87,7 +87,6 @@ if($check_result->num_rows == 0){
 }
 $check_stmt->close();
 
-// Prevent duplicate item name (excluding current item)
 $duplicate_sql = "SELECT id FROM food_items WHERE item_name = ? AND id != ? LIMIT 1";
 $duplicate_stmt = $conn->prepare($duplicate_sql);
 if (!$duplicate_stmt) {

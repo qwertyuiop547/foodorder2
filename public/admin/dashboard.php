@@ -75,9 +75,9 @@ ORDER BY orders.id DESC
             <div class="stat-card" data-stat="<?= $statKeys[$index] ?>">
                 <div class="stat-header">
                     <span class="stat-label"><?= htmlspecialchars($card['title']); ?></span>
-                    <div class="stat-icon <?= $colorMap[$card['icon']]; ?>">
+                    <!-- <div class="stat-icon <?= $colorMap[$card['icon']]; ?>">
                         <i class="fas fa-<?= $iconMap[$card['icon']]; ?>"></i>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="stat-value" id="stat-<?= $statKeys[$index] ?>">
                     <?= $card['icon'] === 'revenue' ? $card['value'] : htmlspecialchars($card['value']); ?>

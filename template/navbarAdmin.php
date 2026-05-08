@@ -17,15 +17,25 @@ require_once '../../includes/helpers.php';
             <button type="submit">Logout</button>
             </form>
         </ul>
+
+        <button class="hamburger-icon" onclick="onToggle()">
+            ☰
+        </button>
     </div>
 </nav>
 
 <div class="container1">
-    <aside class="sidebar">
-
+    <aside id="sidebar" class="sidebar">
         <ul>
             <li><a href="../admin/dashboard.php">Dashboard</a></li>
             <li><a href="../admin/add_items.php">Add Items</a></li>
         </ul>
     </aside>
 </div>
+
+<script>
+    function onToggle() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.classList.toggle('active');
+}
+</script>

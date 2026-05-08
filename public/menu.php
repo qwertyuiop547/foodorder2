@@ -19,6 +19,11 @@ if ($foodItemsResult) {
     setFlash('Failed to load menu items: ' . mysqli_error($conn), 'error');
 }
 
+$menuSignature = '';
+foreach ($foodItems as $foodItem) {
+    $menuSignature .= $foodItem['id'] . ':' . ($foodItem['updated_at'] ?? '') . ':' . (int) $foodItem['is_available'] . '|';
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $items_data = [];
     $total_amount = 0.0;
@@ -111,14 +116,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="customer/index.php" class="back-btn">Back</a>
         </div>
         
-        <?php if (!empty($foodItems)): ?>
-            <form method="POST" action="menu.php">
-                <div class="menu-cards-container">
+        <form method="POST" action="menu.php" id="menuForm">
+            <div
+                id="menu-container"
+                class="menu-cards-container"
+                data-menu-signature="<?= htmlspecialchars($menuSignature, ENT_QUOTES, 'UTF-8') ?>"
+            >
+                <?php if (!empty($foodItems)): ?>
                     <?php foreach ($foodItems as $item): ?>
                         <?php $imgSrc = !empty($item['image_url']) ? $item['image_url'] : '../assets/images/food.jpg'; ?>
                         <div class="menu-cards">
                             <div class="menu-img">
-                                <img src="<?= $imgSrc ?>" alt="" class="image-url">
+                                <img src="<?= htmlspecialchars($imgSrc, ENT_QUOTES, 'UTF-8') ?>" alt="" class="image-url">
                             </div>
 
                             <div class="menu-card-body">
@@ -126,20 +135,122 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <small><?= htmlspecialchars($item['category']) ?></small><br>
                                 <strong>&#8369;<?= number_format($item['price'], 2) ?></strong><br>
                                 Quantity:
-                                <input type="number" name="qty_<?= $item['id'] ?>" value="0" min="0" style="width: 50px;">
+                                <input type="number" name="qty_<?= (int) $item['id'] ?>" value="0" min="0" style="width: 50px;">
                             </div>
                         </div>
                     <?php endforeach; ?>
-                </div>
+                <?php else: ?>
+                    <p id="no-items-msg">No menu items available at the moment.</p>
+                <?php endif; ?>
+            </div>
 
-                <button type="submit" class="btn-menu">
-                    Place Order
-                </button>
-                <?php include '../template/alerts.php'; ?>
-            </form>
-        <?php else: ?>
-            <p>No menu items available at the moment.</p>
-        <?php endif; ?>
+            <button type="submit" class="btn-menu" id="placeOrderBtn" <?= empty($foodItems) ? 'disabled' : '' ?>>Place Order</button>
+            <?php include '../template/alerts.php'; ?>
+        </form>
     </div>
+
+    <script src="../assets/js/ajax.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('menu-container');
+            const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+            if (!container) {
+                return;
+            }
+
+            let lastSignature = container.dataset.menuSignature || '';
+
+            function escapeHtml(value) {
+                const div = document.createElement('div');
+                div.textContent = value ?? '';
+                return div.innerHTML;
+            }
+
+            function getSavedQuantities() {
+                const values = {};
+                container.querySelectorAll('input[type="number"][name^="qty_"]').forEach(function (input) {
+                    values[input.name] = input.value;
+                });
+                return values;
+            }
+
+            function restoreQuantities(values) {
+                Object.keys(values).forEach(function (name) {
+                    const input = container.querySelector(`[name="${name}"]`);
+                    if (input) {
+                        input.value = values[name];
+                    }
+                });
+            }
+
+            function buildSignature(items) {
+                return items.map(function (item) {
+                    return `${item.id}:${item.updated_at || ''}:${item.is_available ?? 1}`;
+                }).join('|');
+            }
+
+            function renderMenu(items) {
+                if (!Array.isArray(items) || items.length === 0) {
+                    container.innerHTML = '<p id="no-items-msg">No menu items available at the moment.</p>';
+                    if (placeOrderBtn) {
+                        placeOrderBtn.disabled = true;
+                    }
+                    return;
+                }
+
+                const savedValues = getSavedQuantities();
+
+                container.innerHTML = items.map(function (item) {
+                    const imgSrc = item.image_url || '../assets/images/food.jpg';
+
+                    return `
+                        <div class="menu-cards">
+                            <div class="menu-img">
+                                <img src="${escapeHtml(imgSrc)}" alt="" class="image-url">
+                            </div>
+                            <div class="menu-card-body">
+                                <strong class="menu-title">${escapeHtml(item.item_name)}</strong><br>
+                                <small>${escapeHtml(item.category)}</small><br>
+                                <strong>&#8369;${Number(item.price).toFixed(2)}</strong><br>
+                                Quantity:
+                                <input type="number" name="qty_${item.id}" value="0" min="0" style="width: 50px;">
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                restoreQuantities(savedValues);
+
+                if (placeOrderBtn) {
+                    placeOrderBtn.disabled = false;
+                }
+            }
+
+            async function refreshMenu() {
+                try {
+                    const response = await AJAX.api('get_menu.php');
+
+                    if (!response.success || !Array.isArray(response.items)) {
+                        return;
+                    }
+
+                    const signature = buildSignature(response.items);
+                    if (signature === lastSignature) {
+                        return;
+                    }
+
+                    lastSignature = signature;
+                    container.dataset.menuSignature = signature;
+                    renderMenu(response.items);
+                } catch (error) {
+                    console.error('Menu refresh error:', error);
+                }
+            }
+
+            refreshMenu();
+            setInterval(refreshMenu, 3000);
+        });
+    </script>
 </body>
 </html>
