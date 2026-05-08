@@ -49,18 +49,45 @@ function login($username, $password){
     }
 
     // ssssssesssionnnnn set
-    $_SESSION['user_id'] = $user['id'];
+    if (!isset($_SESSION['auth_roles']) || !is_array($_SESSION['auth_roles'])) {
+        $_SESSION['auth_roles'] = [];
+    }
+
+    $_SESSION['auth_roles'][$user['role']] = [
+        'user_id' => (int) $user['id'],
+        'name' => $user['name'],
+        'email' => $user['email'],
+        'role' => $user['role']
+    ];
+
+    $_SESSION['user_id'] = (int) $user['id'];
     $_SESSION['role']    = $user['role'];
     $_SESSION['name']    = $user['name'];
 
     return true;
 }
 
-function logout(){
-    session_destroy();
-    session_unset();
+function logout($role = null, $redirectPath = '../public/login.php'){
+    if (!isset($_SESSION['auth_roles']) || !is_array($_SESSION['auth_roles'])) {
+        $_SESSION['auth_roles'] = [];
+    }
 
-    header('Location: ../public/login.php');
+    $role = $role ?? ($_SESSION['role'] ?? null);
+
+    if ($role !== null && isset($_SESSION['auth_roles'][$role])) {
+        unset($_SESSION['auth_roles'][$role]);
+    }
+
+    if (isset($_SESSION['role']) && $_SESSION['role'] === $role) {
+        unset($_SESSION['user_id'], $_SESSION['role'], $_SESSION['name']);
+    }
+
+    if (empty($_SESSION['auth_roles'])) {
+        session_unset();
+        session_destroy();
+    }
+
+    header('Location: ' . $redirectPath);
     exit;
 }
 ?>

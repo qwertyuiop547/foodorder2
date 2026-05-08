@@ -1,7 +1,9 @@
 <?php
-require_once 'auth.php';
-
 session_start();
 
-logout();
+require_once 'auth.php';
+
+$role = $_POST['role'] ?? ($_GET['role'] ?? null);
+
+logout($role, '../public/login.php');
 ?>

@@ -23,7 +23,7 @@ if($_SERVER['REQUEST_METHOD'] !== 'POST'){
 }
 
 // Check if user is logged in as customer
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'customer'){
+if (!hasRole('customer')) {
     echo json_encode([
         'success' => false,
         'message' => 'Please log in to place an order'
@@ -31,7 +31,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'customer'){
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = authUserId('customer');
 
 // Process form data
 $items = [];
@@ -76,7 +76,7 @@ try {
         throw new Exception('Failed to prepare statement: ' . $conn->error);
     }
     
-    $insert_order_stmt->bind_param('iss', $user_id, $order_code, $total_amount);
+    $insert_order_stmt->bind_param('isd', $user_id, $order_code, $total_amount);
     
     if(!$insert_order_stmt->execute()){
         throw new Exception('Failed to insert order: ' . $insert_order_stmt->error);
@@ -93,7 +93,7 @@ try {
     }
     
     foreach ($items as $item) {
-        $insert_item_stmt->bind_param('sis', $item['name'], $item['quantity'], $item['price']);
+        $insert_item_stmt->bind_param('isid', $order_id, $item['name'], $item['quantity'], $item['price']);
         
         if(!$insert_item_stmt->execute()){
             throw new Exception('Failed to insert order item: ' . $insert_item_stmt->error);

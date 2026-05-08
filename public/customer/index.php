@@ -4,7 +4,7 @@ session_start();
 require_once '../../config/database.php';
 require_once '../../includes/helpers.php';
 
-requiredRole(['customer'], '../login.php');
+requiredRole('customer', '../login.php');
 
 $user_id = (int) ($_SESSION['user_id'] ?? 0);
 $user_name = $_SESSION['name'] ?? 'Customer';

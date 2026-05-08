@@ -5,6 +5,7 @@
     let refreshInterval = null;
     let currentStatus = 'all';
     let onUpdateCallback = null;
+    let requestContext = 'public';
 
     function detectAjaxBase() {
         const path = window.location.pathname;
@@ -25,11 +26,29 @@
     }
     detectAjaxBase();
 
+    function detectRequestContext() {
+        const path = window.location.pathname.toLowerCase();
+
+        if (path.includes('/public/customer/')) {
+            requestContext = 'customer';
+        } else if (path.includes('/public/kitchen/')) {
+            requestContext = 'staff';
+        } else if (path.includes('/public/admin/')) {
+            requestContext = 'admin';
+        } else {
+            requestContext = 'public';
+        }
+    }
+    detectRequestContext();
+
     let isPublicMode = false;
     function getOrders(status = 'all') {
         currentStatus = status;
         const publicParam = isPublicMode ? '&public=1' : '';
-        return api(`get_orders.php?status=${status}${publicParam}`);
+        const contextParam = !isPublicMode && requestContext !== 'public'
+            ? `&context=${encodeURIComponent(requestContext)}`
+            : '';
+        return api(`get_orders.php?status=${encodeURIComponent(status)}${publicParam}${contextParam}`);
     }
 
     function api(endpoint, options = {}) {
@@ -75,6 +94,11 @@
 
     function setPublicMode(enabled) {
         isPublicMode = enabled;
+        if (enabled) {
+            requestContext = 'public';
+        } else {
+            detectRequestContext();
+        }
     }
 
     function getStats() {

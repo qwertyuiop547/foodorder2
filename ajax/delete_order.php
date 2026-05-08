@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!hasRole('admin')) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }

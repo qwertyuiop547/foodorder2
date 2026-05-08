@@ -7,12 +7,13 @@ require_once '../../includes/helpers.php';
     <div class="nav-container">
     
         <div class="header-text"> 
-            <h1> Canteen Admin Panel</h1>
+            <h1>Food Pulse Admin Panel</h1>
         </div>
 
         <ul class="nav-links">
             <p>Welcome, <?php echo $_SESSION['name'] ?>!</p>
-            <form action="../../includes/logout.php">
+            <form action="../../includes/logout.php" method="post">
+            <input type="hidden" name="role" value="admin">
             <button type="submit">Logout</button>
             </form>
         </ul>
@@ -25,7 +26,6 @@ require_once '../../includes/helpers.php';
         <ul>
             <li><a href="../admin/dashboard.php">Dashboard</a></li>
             <li><a href="../admin/add_items.php">Add Items</a></li>
-            <li><a href="../menu.php">Menu</a></li>
         </ul>
     </aside>
 </div>

@@ -4,8 +4,50 @@ function redirect($path) {
     exit;
 }
 
+function authRoles(){
+    if (!isset($_SESSION['auth_roles']) || !is_array($_SESSION['auth_roles'])) {
+        return [];
+    }
+
+    return $_SESSION['auth_roles'];
+}
+
+function authRole($role){
+    $roles = authRoles();
+    return $roles[$role] ?? null;
+}
+
+function authUserId($role){
+    $auth = authRole($role);
+    return (int)($auth['user_id'] ?? 0);
+}
+
+function authUserName($role){
+    $auth = authRole($role);
+    return $auth['name'] ?? null;
+}
+
+function authUserEmail($role){
+    $auth = authRole($role);
+    return $auth['email'] ?? null;
+}
+
+function syncActiveAuthRole($role){
+    $auth = authRole($role);
+
+    if (!$auth) {
+        return false;
+    }
+
+    $_SESSION['user_id'] = (int)($auth['user_id'] ?? 0);
+    $_SESSION['role'] = $auth['role'] ?? $role;
+    $_SESSION['name'] = $auth['name'] ?? '';
+
+    return true;
+}
+
 function isLoggedIn(){
-    return isset($_SESSION['user_id']);
+    return !empty(authRoles());
 }
 
 function requireLogIn(){
@@ -15,28 +57,52 @@ function requireLogIn(){
 }
 
 function requireAdmin(){
-    if(!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin'){
+    if(!authRole('admin')){
         redirect('../login.php');
-        exit;
     }
+
+    syncActiveAuthRole('admin');
 }
 
 function hasRole($role){
-    if(!isset($_SESSION['role'])){
+    if(is_array($role)){
+        foreach ($role as $singleRole) {
+            if (authRole($singleRole)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
-    if(is_array($role)){
-        return in_array($_SESSION['role'], $role, true);
+    return (bool) authRole($role);
+}
+
+function resolveRole($role){
+    $roles = is_array($role) ? $role : [$role];
+    $currentRole = $_SESSION['role'] ?? null;
+
+    if ($currentRole && in_array($currentRole, $roles, true) && authRole($currentRole)) {
+        return $currentRole;
     }
 
-    return $_SESSION['role'] === $role;
+    foreach ($roles as $singleRole) {
+        if (authRole($singleRole)) {
+            return $singleRole;
+        }
+    }
+
+    return null;
 }
 
 function requiredRole($role, $redirectPath = 'login.php'){
-    if(!hasRole($role)){
+    $matchedRole = resolveRole($role);
+
+    if(!$matchedRole){
         redirect($redirectPath);
     }
+
+    syncActiveAuthRole($matchedRole);
 }
 
 function post($key, $default = null){
@@ -102,11 +168,14 @@ function getAll($conn, $sql){
 }
 
 function totalRevenue($conn, $table){
-    $sql = "SELECT SUM(total_amount) AS total_revenue from $table";
+    $sql = "SELECT SUM(total_amount) AS total_revenue from $table WHERE status = 'completed'";
     $result = mysqli_query($conn, $sql);
 
-    $row = mysqli_fetch_assoc($result);
+    if(!$result){
+        return 0;
+    }
 
+    $row = mysqli_fetch_assoc($result);
     return $row['total_revenue'] ?? 0;
 }
 

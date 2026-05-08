@@ -887,15 +887,22 @@ td {
 
 .menu-header{
     padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .menu-cards {
-    flex: 0 1 240px;
+    flex: 0 0 400px;
+    width: 400px;
+    min-height: 360px; 
+    box-sizing: border-box;
     background: #fff;
     border-radius: 16px;
-    padding: 18px;
+    padding: 50px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .menu-cards:hover {
@@ -903,10 +910,11 @@ td {
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
 }
 
-.menu-cards-container{
+.menu-cards-container {
     display: flex;
+    flex-wrap: wrap;
     gap: 20px;
-    margin-bottom: 10px;
+    align-items: stretch;
 }
 
 .imgUrl {
@@ -914,6 +922,98 @@ td {
     height: 50px;
     border-radius: 50%;
 }
+
+.back-btn {
+  display: inline-block;
+  padding: 10px 15px;
+  background: black;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.image-url {
+    width: 500px;
+    height: 500px;
+    border-radius: 6px;
+}
+
+.menu-img img{
+    display: block;
+    object-fit: cover;
+    width: 100%;
+    height: 250px;
+}
+
+.menu-title {
+    font-size: 24px;
+}
+
+.menu-card-body{
+    padding: 10px;
+}
+
+.btn-menu{
+    margin-top: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
