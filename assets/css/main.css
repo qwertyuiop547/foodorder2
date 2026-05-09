@@ -205,9 +205,10 @@
 }
 
 .sidebar {
-    flex: 0 0 300px;
+    /* display: flex; */
+    flex: 0 0 400px;
     width: 300px;
-    min-height: 100vh;
+    height: 100vh;
     background-color: #0F172A;
     color: #fff;
     padding: 80px 24px 24px;
@@ -965,6 +966,28 @@ td {
     border: none;
     cursor: pointer;
     z-index:1000;
+}
+
+.sidebar ul.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar .logout-item {
+    margin-top: auto;
+}
+
+.logout-btn {
+    width: 100%;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    background: red;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 18px;
 }
 
 

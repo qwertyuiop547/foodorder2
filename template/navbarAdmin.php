@@ -23,13 +23,15 @@ require_once '../../includes/helpers.php';
 
 <div class="container1">
     <aside id="sidebar" class="sidebar">
-        <ul>
+        <ul class="sidebar-menu">
             <li><a href="../admin/dashboard.php">Dashboard</a></li>
             <li><a href="../admin/add_items.php">Add Items</a></li>
             
+            <li class="logout-item">
             <form action="../../includes/logout.php" method="post">
-                <button type="submit">Logout</button>
+                <button type="submit" class="logout-btn">Logout</button>
             </form>
+            </li>
         </ul>
     </aside>
 </div>
