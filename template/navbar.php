@@ -22,7 +22,12 @@
     const toggleBtn = document.getElementById('toggleMenu');
     const dropdownMenu = document.getElementById('dropdownMenu');
 
-    toggleBtn.addEventListener('click', function() {
+    toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
         dropdownMenu.classList.toggle('show');
+    });
+
+    window.addEventListener('click', () => {
+        dropdownMenu.classList.remove('show');
     });
 </script>
